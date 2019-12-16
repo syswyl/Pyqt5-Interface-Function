@@ -1,0 +1,2 @@
+# Pyqt5_highspeed
+利用python的pyqt库实现一个简洁的pyqt5界面
