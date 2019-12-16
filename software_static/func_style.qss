@@ -1,0 +1,162 @@
+/* part and pass button */
+QPushButton#part_pass_button
+{
+    background-color:rgb(0, 153, 204);
+    color: rgb(255, 255, 255);
+    border: 1px;
+    border-style: solid;  
+}
+QPushButton#part_pass_button:hover
+{
+    background-color:rgb(184, 184, 186)
+}
+QPushButton#part_pass_button:checked {
+    background: rgb(184, 184, 186);
+    border-style: unset;
+    padding-top: 10px;
+}
+
+/*  function  button  */
+QPushButton#func_button
+{
+    background-color:rgb(0, 153, 204);
+    color: rgb(255, 255, 255);
+    border: rgb(255, 255, 255);
+    border-radius:20px; 
+    /* border: 2px; */
+}
+QPushButton#func_button:hover
+{
+    background-color:rgb(16, 58, 248);
+}
+QPushButton#func_button:checked {
+    background:rgb(102,102,102);
+    color:rgb(218, 218, 218);
+    border-style: solid;
+    border-width: 0.5px; 
+}
+/* title style */
+QPushButton#min_max {
+    background:rgb(0, 153, 204);
+    border: solid;
+}
+
+QLabel#title_style{
+    background-color: rgb(0, 153, 204);
+    color: rgb(255, 255, 255);
+    font-family: ºÚÌå;
+    font-size: 25px;
+    font-weight: 900;
+}
+
+
+/*  order button */
+QPushButton#order_button
+{
+    background-color:rgb(36, 162, 201);
+    color: rgb(255, 255, 255);
+    border: rgb(255, 255, 255);
+    border-width: 2px;
+    border-radius:1.25em;
+}
+QPushButton#order_button:hover
+{
+    background-color:rgb(31, 69, 241);
+}
+
+/* Text prompt label */
+QLabel#hint_label
+{
+    color: rgb(255, 255, 255);
+}
+QLabel#hint_label_picin
+{
+    color: rgb(255, 255, 255);
+    border-style: none none none solid;
+    border-width: 5px;
+    border-color: rgb(255, 255, 255);
+}
+QLabel#hint_label_deepdark
+{
+    background-color: rgb(30,30,30);
+    color: rgb(255, 255, 255);
+}
+QLabel#hint_label_deepred
+{
+    background-color: rgb(30,30,30);
+    color: rgb(255, 0, 0);
+}
+QLabel#state_label
+{
+    background-color: rgb(0, 153, 204);
+    color: rgb(255, 255, 255);
+    font-size: 20px;
+    font-weight: bold;
+}
+
+/* Text prompt testbrower */
+QTextBrowser#file_label
+{
+    background-color: rgb(51,51,51);
+    color: rgb(255, 255, 255);
+    font-weight: normal;
+}
+
+/*  in and out button  */
+QPushButton#inout_button
+{
+    background-color:rgb(0, 153, 204);
+    color: rgb(255, 255, 255);
+    border: rgb(255, 255, 255);
+    font-weight: normal;
+    border-radius:0.5em; 
+}
+QPushButton#inout_button:hover
+{
+    background-color:rgb(31, 69, 241);
+}
+
+/* QComboBox show text style*/
+QComboBox#comboBox_show
+{
+    font-size:20px;
+    font-weight: bold;
+    color: rgb(255, 204, 0);
+    background-color: rgb(30,30,30);
+} 
+QComboBox#comboBox_show::selection
+{
+    color: rgb(30,30,30);
+    background-color: rgb(30,30,30);
+}
+QComboBox QAbstractItemView
+{
+    font-size:18px;
+    font-weight: bold;
+    color: rgb(255, 204, 0);
+    background-color:rgb(30,30,30);
+    padding-left: 20px;
+}
+ QComboBox#comboBox_show:editable
+{
+    color: rgb(255, 204, 0);
+    background-color:rgb(30,30,30);
+    padding-left: 20px;
+}
+
+QComboBox#comboBox_show:!editable
+{
+    color: rgb(255, 204, 0);
+    background-color: rgb(30,30,30); 
+    padding-left:20px; 
+} 
+QComboBox#comboBox_show::drop-down 
+{
+    border-color: rgb(30, 30, 30);   
+}
+
+/* defect show style */
+QTableWidget#show_warn{
+    background-color: rgb(51, 51, 51);
+    gridline-color: white;
+} 
