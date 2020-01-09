@@ -11,9 +11,14 @@ import win32con
 from win32process import SuspendThread, ResumeThread
 import numpy as np
 import cv2
+import random
+import math
 import time
 import ctypes
 import PyQt5.sip
+import PIL.Image as Image
+import re
+from PIL import Image
 
 
 # 增加了一个继承自QThread类的类，重新写了它的run()函数
@@ -34,7 +39,7 @@ class WorkThread(QThread):
             print('get thread handle failed', e)
         print('thread id', int(QThread.currentThreadId()))
         # 循环发送信号
-        for i in range(1, 10):
+        for i in range(1, 6):
             QThread.sleep(1)
         self.trigger.emit('end')
 
@@ -106,8 +111,15 @@ class my_labelshow(QLabel):
             width = height * 1.0 * (self.image.width() *1.0 / self.image.height())
             painter.translate(self.width() / 2 + self.XPtInterval, self.height() / 2 + self.YPtInterval)
             painter.scale(self.ZoomValue,self.ZoomValue)
+
+            ########################大小调整
+            width = min(self.image.width(),self.width())
+            # height = min(self.image.height(),self.height())
+            #########################
             picRect = QRectF(-width / 2, -height / 2, width, height)
             painter.drawImage(picRect,self.image)
+
+
 
     def wheelEvent(self,event:QWheelEvent):
         value = event.angleDelta()
@@ -182,7 +194,7 @@ class Func_window(QtWidgets.QWidget,Ui_high_speed):
         self.label_pic =  my_labelshow()
         self.label_pic.setText("结果显示")
         self.label_pic.setObjectName("label_pic")
-        self.gridLayout.addWidget(self.label_pic, 2, 1, 1, 1)
+        self.gridLayout.addWidget(self.label_pic, 3, 1, 1, 1)
         self.resize(1400, 950)
         self.setWindowIcon(QtGui.QIcon("./ico/title.ico"))
         self.setWindowFlags(Qt.FramelessWindowHint)  # 无边框化
@@ -213,15 +225,11 @@ class Func_window(QtWidgets.QWidget,Ui_high_speed):
         # 将点击事件与对应的槽函数进行连接
         self.button_begin.setObjectName('func_button')
         self.button_end.setObjectName('func_button')
-        self.button_pause.setObjectName('func_button')
-        self.button_restart.setObjectName('func_button')
         self.button_pro.setObjectName('order_button')
         self.button_next.setObjectName('order_button')
 
         self.button_in.clicked.connect(self.import_file)  # 导入文件按钮
         self.button_begin.clicked.connect(self.begin_test)  # 开始按钮
-        self.button_pause.clicked.connect(self.pause_test)  # 暂停按钮
-        self.button_restart.clicked.connect(self.restart_test)  # 恢复检测按钮
         self.button_end.clicked.connect(self.end_test)  # 结束按钮
         self.button_next.clicked.connect(self.pic_next)  # 下一张按钮
         self.button_pro.clicked.connect(self.pic_pro)  # 上一张按钮
@@ -237,17 +245,33 @@ class Func_window(QtWidgets.QWidget,Ui_high_speed):
         self.button_pass.addButton(self.passseq_6, 6)
         self.button_pass.addButton(self.passseq_7, 7)
         self.button_pass.addButton(self.passseq_8, 8)
+        self.button_pass.addButton(self.passseq_9, 9)
+        self.button_pass.addButton(self.passseq_10, 10)
+        self.button_pass.addButton(self.passseq_11, 11)
+        self.button_pass.addButton(self.passseq_12, 12)
+        self.button_pass.addButton(self.passseq_13, 13)
+        self.button_pass.addButton(self.passseq_14, 14)
+        self.button_pass.addButton(self.passseq_15, 15)
+        self.button_pass.addButton(self.passseq_16, 16)
 
         self.button_pass.setExclusive(True)
 
-        self.passseq_1.setObjectName('part_pass_button')
+        self.passseq_1.setObjectName('part_pass_button_leftEdge')
         self.passseq_2.setObjectName('part_pass_button')
         self.passseq_3.setObjectName('part_pass_button')
         self.passseq_4.setObjectName('part_pass_button')
         self.passseq_5.setObjectName('part_pass_button')
         self.passseq_6.setObjectName('part_pass_button')
         self.passseq_7.setObjectName('part_pass_button')
-        self.passseq_8.setObjectName('part_pass_button')
+        self.passseq_8.setObjectName('part_pass_button_rightEdge')
+        self.passseq_9.setObjectName('part_pass_button_leftEdge')
+        self.passseq_10.setObjectName('part_pass_button')
+        self.passseq_11.setObjectName('part_pass_button')
+        self.passseq_12.setObjectName('part_pass_button')
+        self.passseq_13.setObjectName('part_pass_button')
+        self.passseq_14.setObjectName('part_pass_button')
+        self.passseq_15.setObjectName('part_pass_button')
+        self.passseq_16.setObjectName('part_pass_button_rightEdge')
 
         self.passseq_1.setCheckable(True)
         self.passseq_2.setCheckable(True)
@@ -257,6 +281,14 @@ class Func_window(QtWidgets.QWidget,Ui_high_speed):
         self.passseq_6.setCheckable(True)
         self.passseq_7.setCheckable(True)
         self.passseq_8.setCheckable(True)
+        self.passseq_9.setCheckable(True)
+        self.passseq_10.setCheckable(True)
+        self.passseq_11.setCheckable(True)
+        self.passseq_12.setCheckable(True)
+        self.passseq_13.setCheckable(True)
+        self.passseq_14.setCheckable(True)
+        self.passseq_15.setCheckable(True)
+        self.passseq_16.setCheckable(True)
 
         self.passseq_1.clicked.connect(partial(self.but_pass,1))
         self.passseq_2.clicked.connect(partial(self.but_pass,2))
@@ -266,6 +298,15 @@ class Func_window(QtWidgets.QWidget,Ui_high_speed):
         self.passseq_6.clicked.connect(partial(self.but_pass,6))
         self.passseq_7.clicked.connect(partial(self.but_pass,7))
         self.passseq_8.clicked.connect(partial(self.but_pass,8))
+        self.passseq_9.clicked.connect(partial(self.but_pass,9))
+        self.passseq_10.clicked.connect(partial(self.but_pass,10))
+        self.passseq_11.clicked.connect(partial(self.but_pass,11))
+        self.passseq_12.clicked.connect(partial(self.but_pass,12))
+        self.passseq_13.clicked.connect(partial(self.but_pass,13))
+        self.passseq_14.clicked.connect(partial(self.but_pass,14))
+        self.passseq_15.clicked.connect(partial(self.but_pass,15))
+        self.passseq_16.clicked.connect(partial(self.but_pass,16))
+
 
         # # 以下是对应的监测部位序号
         self.button_part = QButtonGroup(self)
@@ -273,34 +314,44 @@ class Func_window(QtWidgets.QWidget,Ui_high_speed):
         self.button_part.addButton(self.button_rightup, 2)
         self.button_part.addButton(self.button_leftdown, 3)
         self.button_part.addButton(self.button_leftup, 4)
-        self.button_part.addButton(self.button_baseleft, 5)
-        self.button_part.addButton(self.button_basemid, 6)
-        self.button_part.addButton(self.button_baseright, 7)
+        self.button_part.addButton(self.button_basemid, 5)
+        self.button_part.addButton(self.button_baseinright, 6)
+        self.button_part.addButton(self.button_baseinleft, 7)
+        self.button_part.addButton(self.button_baseoutright, 8)
+        self.button_part.addButton(self.button_baseoutleft, 9)
+        
 
         self.button_rightdown.setObjectName('part_pass_button')
-        self.button_rightup.setObjectName('part_pass_button')
+        self.button_rightup.setObjectName('part_pass_button_leftEdge')
         self.button_leftdown.setObjectName('part_pass_button')
         self.button_leftup.setObjectName('part_pass_button')
-        self.button_baseleft.setObjectName('part_pass_button')
+        self.button_baseinleft.setObjectName('part_pass_button')
+        self.button_baseinright.setObjectName('part_pass_button')
+        self.button_baseoutleft.setObjectName('part_pass_button_rightEdge')
+        self.button_baseoutright.setObjectName('part_pass_button')
         self.button_basemid.setObjectName('part_pass_button')
-        self.button_baseright.setObjectName('part_pass_button')
+        
 
         self.button_rightdown.setCheckable(True)
         self.button_rightup.setCheckable(True)
         self.button_leftdown.setCheckable(True)
         self.button_leftup.setCheckable(True)
-        self.button_baseleft.setCheckable(True)
         self.button_basemid.setCheckable(True)
-        self.button_baseright.setCheckable(True)
+        self.button_baseoutright.setCheckable(True)
+        self.button_baseoutleft.setCheckable(True)
+        self.button_baseinleft.setCheckable(True)
+        self.button_baseinright.setCheckable(True)
         
         self.button_rightdown.clicked.connect(partial(self.but_part,'rd'))
         self.button_rightup.clicked.connect(partial(self.but_part,'ru'))
         self.button_leftdown.clicked.connect(partial(self.but_part,'ld'))
         self.button_leftup.clicked.connect(partial(self.but_part,'lu'))
-        self.button_baseleft.clicked.connect(partial(self.but_part,'bl'))
+        self.button_baseinleft.clicked.connect(partial(self.but_part,'bil'))
+        self.button_baseinright.clicked.connect(partial(self.but_part,'bir'))
+        self.button_baseoutleft.clicked.connect(partial(self.but_part,'bol'))
+        self.button_baseoutright.clicked.connect(partial(self.but_part,'bor'))
         self.button_basemid.clicked.connect(partial(self.but_part,'bm'))
-        self.button_baseright.clicked.connect(partial(self.but_part,'br'))
-
+        
         # 以下是对于的各种文字label标签
         self.label_pro.setObjectName('hint_label_deepdark')
         self.label_monitor.setObjectName('hint_label_deepdark')
@@ -328,7 +379,7 @@ class Func_window(QtWidgets.QWidget,Ui_high_speed):
         self.info_warn.horizontalHeader().setObjectName('header_show_warn')
 
         # 定义相关变量并且进行初始化
-        self.info_warn_col = 5  # 缺陷检测结果列数（4）
+        self.info_warn_col = 5  # 缺陷检测结果列数（5）
         self.info_warn_row = 0  # 缺陷检测结果行数
         self.show_info = []
         
@@ -340,7 +391,7 @@ class Func_window(QtWidgets.QWidget,Ui_high_speed):
                              #                                     list[1]: 开始查看的图片序号，共有33张图片
                              #                                     list[2]: 结束产看的图片序号
         self.cur_imageID = 0    # 当前浏览的图片id
-        self.image_num = 33     # 去除最开始和最末尾的两张图片 总共264/8 = 33 每节车厢33张图片
+        self.image_num = 32     # 去除最开始和最末尾的5张图片 总共256 / 8 = 32 每节车厢32张图片
         self.cur_ImPath = ''
         self.list_rail = []
         self.comboBox_railnum.clear()
@@ -355,12 +406,8 @@ class Func_window(QtWidgets.QWidget,Ui_high_speed):
         self.button_begin.setCheckable(True)
         self.button_end.setCheckable(True)
         self.button_end.setChecked(True)
-        self.button_restart.setCheckable(True)
-        self.button_restart.setEnabled(False)
-        self.button_restart.setChecked(True)
-        self.button_pause.setCheckable(True)
-        self.button_pause.setEnabled(False)
-        self.button_pause.setChecked(True)
+
+
         self.button_next.setCheckable(True)
         self.button_pro.setCheckable(True)
 
@@ -372,7 +419,7 @@ class Func_window(QtWidgets.QWidget,Ui_high_speed):
         self.label_state.clear()
         self.info_proc.clear()
         self.info_warn.setRowCount(0)
-        self.info_warn.setColumnCount(4)
+        self.info_warn.setColumnCount(5)
         self.info_warn.clearContents()
         self.info_warn.clear()
         self.show_info = []
@@ -434,10 +481,8 @@ class Func_window(QtWidgets.QWidget,Ui_high_speed):
     '''   
     def default_folder(self):
         show_path = os.getcwd() + '/image_out'
-        # print('默认读取文件价的路径' + show_path)
         for fn in os.listdir(show_path):
             self.list_rail.append(fn)
-        # print(self.list_rail)
         if self.list_rail:
             for list_rail in self.list_rail:
                 self.comboBox_setnum.addItem(list_rail[:2])
@@ -467,39 +512,10 @@ class Func_window(QtWidgets.QWidget,Ui_high_speed):
         self.button_begin.setEnabled(False)
         self.begin_thread.trigger.connect(self.end_test)
         self.button_end.setChecked(False)
-        self.button_pause.setChecked(False)
         self.button_end.setEnabled(True)
-        self.button_pause.setEnabled(True)
         #启动线程
         self.begin_thread.start()
 
-    '''
-        暂停检测功能函数 pause_test 
-        暂停当前执行的检测，返回正常界面
-    '''
-    def pause_test(self):
-        self.button_pause.setEnabled(False)
-        self.button_end.setEnabled(True)
-        self.button_restart.setEnabled(True)
-        self.button_restart.setChecked(False)
-
-	##################################
-        ret = SuspendThread(self.begin_thread.handle)
-	##################################
-
-    '''
-        恢复检测功能函数 restart_test 
-        立即停止当前执行的检测，返回正常界面
-    '''
-    def restart_test(self):
-        self.button_pause.setEnabled(True)
-        self.button_pause.setChecked(False)
-        self.button_begin.setEnabled(False)
-        self.button_end.setEnabled(True)
-        self.button_restart.setEnabled(False)
-        ######################################
-        ret = ResumeThread(self.begin_thread.handle)
-        ######################################
 
     '''
         结束检测功能函数 end_test 
@@ -510,10 +526,6 @@ class Func_window(QtWidgets.QWidget,Ui_high_speed):
             self.begin_thread.quit()
         self.button_begin.setEnabled(True)
         self.button_begin.setChecked(False)
-        self.button_pause.setChecked(True)
-        self.button_restart.setChecked(True)
-        self.button_pause.setEnabled(False)
-        self.button_restart.setEnabled(False)
         self.button_end.setEnabled(False)
         self.button_end.setChecked(True)
 
@@ -546,7 +558,7 @@ class Func_window(QtWidgets.QWidget,Ui_high_speed):
         # 根据实际状况逐行显示数据到info_warn
         # 在单元格内放置控件
         
-        self.info_warn.setSpan(0, 0, 1, 4)
+        self.info_warn.setSpan(0, 0, 1, 5)
         newTitle = QLabel()
         newTitle.setText('自动报警信息')
         newTitle.setStyleSheet('color:rgb(255, 204, 0);font-size:15px;font-weight:bold')
@@ -830,6 +842,10 @@ class Func_window(QtWidgets.QWidget,Ui_high_speed):
             self.cur_imageID = cur_imageID
             self.label_state.setText('图片序号      ' + self.cur_ImPath)
 
+            #########画框##############
+            self.load_image(self.cur_imageID)
+            ########################### 
+
             # self.setWindowTitle(self.cur_ImPath)
         else:
             self.refresh_button()
@@ -858,6 +874,10 @@ class Func_window(QtWidgets.QWidget,Ui_high_speed):
             self.info_proc.setText(str(cur_imageID + 1) + '/' + str(self.image_num))
             self.cur_imageID = cur_imageID
             self.label_state.setText('  图片名称      ' + self.cur_ImPath)
+
+            #########画框##############
+            self.load_image(self.cur_imageID)
+            ########################### 
 
             # self.setWindowTitle(self.cur_ImPath)
         else:
@@ -892,8 +912,8 @@ class Func_window(QtWidgets.QWidget,Ui_high_speed):
         必须结合车部位函数确认唯一的result folder，否则路径会报错
     '''
     def but_pass(self,seq):
-        self.show_beg = (seq - 1)*33 + 1
-        self.show_end = seq * 33 
+        self.show_beg = (seq - 1)*32 + 5
+        self.show_end = seq * 32 + 5 
         self.show_pic[1] = self.show_beg
         self.show_pic[2] = self.show_end
         self.cur_imageID = 0
@@ -901,15 +921,23 @@ class Func_window(QtWidgets.QWidget,Ui_high_speed):
         if self.show_pic[0]:
             cur_imgindex1 = self.show_pic[0].rindex('/')
             cur_imgindex2 = self.show_pic[0].rindex('_')
-            tmp_curpath = self.show_pic[0][cur_imgindex1 + 1:cur_imgindex2]
+            tmp_curpath = self.show_pic[0][cur_imgindex1 + 1:cur_imgindex2]  
+
+            #######合并图片#######
+            self.joint_pic(self.cur_file)
+            #####################
+
         self.cur_ImPath = self.show_pic[0] + '/' + tmp_curpath + '-' + str(self.show_pic[1]) + '.jpg'
-        # print(self.cur_ImPath)
+
         if not exists(self.cur_ImPath):
             return 
-
         self.label_pic.refresh()
         self.label_pic.LocalFileName = self.cur_ImPath
         self.update()
+
+        #########画框##############
+        self.load_image(self.cur_imageID)
+        ########################### 
 
         self.label_state.setText('  图片名称      ' + self.cur_ImPath)
         self.info_proc.setText(str(self.cur_imageID + 1) + '/' + str(self.image_num))
@@ -917,54 +945,90 @@ class Func_window(QtWidgets.QWidget,Ui_high_speed):
     '''
         查看结果文件中的对应车部位文件夹函数 but_part
         必须结合车序号函数确认唯一的result folder，否则路径会报错
-        左侧上：button_leftup --> lu
-        左侧下：button_leftdown --> lr 
-        右侧上：button_rightup --> rd
-        右侧下：button_rightdown -- >ru
-        底中：button_basemid --> bm
-        底左：button_baseleft --> bl
-        底右：button_baseright --> br
+        左侧上：button_leftup --> lu 28
+        左侧下：button_leftdown --> lr 27
+        右侧上：button_rightup --> rd 20
+        右侧下：button_rightdown -- >ru 21
+        底中：button_basemid --> bm 24
+        底内左：button_baseinleft --> bil 25
+        底内右：button_baseinright --> bir 23  
+        底外左：button_baseoutleft --> bol 26
+        底外右：button_baseoutright --> bor 22 
     '''
     def but_part(self,part):
-        # print(self.out_folder)
         if not exists(self.out_folder):
             self.refresh_button()
             self.label_pic.clear()
             self.label_pic.refresh()
+            self.label_picall.clear()
             QMessageBox.warning(None,'错误路径提示','当前路径不存在，请检查')
             return
         if part == 'ru':
             self.show_pic[0] = self.out_folder + '/20_result'
             self.cur_ImPath = self.show_pic[0] + '/20-' + str(self.show_pic[1]) + '.jpg'
-            cur_file = '20'
+            self.cur_file = '20'
         elif part == 'rd':
             self.show_pic[0] = self.out_folder + '/21_result'
             self.cur_ImPath = self.show_pic[0] + '/21-' + str(self.show_pic[1]) + '.jpg'
-            cur_file = '21'
-        elif part == 'br':
+            self.cur_file = '21'
+        elif part == 'bor':
             self.show_pic[0] = self.out_folder + '/22_result'
             self.cur_ImPath = self.show_pic[0] + '/22-' + str(self.show_pic[1]) + '.jpg'
-            cur_file = '22'
+            self.cur_file = '22'
+        elif part == 'bir':
+            self.show_pic[0] = self.out_folder + '/23_result'
+            self.cur_ImPath = self.show_pic[0] + '/23-' + str(self.show_pic[1]) + '.jpg'
+            self.cur_file = '23'
         elif part == 'bm':
             self.show_pic[0] = self.out_folder + '/24_result'
             self.cur_ImPath = self.show_pic[0] + '/24-' + str(self.show_pic[1]) + '.jpg'
-            cur_file = '24'
-        elif part == 'bl':
+            self.cur_file = '24'
+        elif part == 'bil':
+            self.show_pic[0] = self.out_folder + '/25_result'
+            self.cur_ImPath = self.show_pic[0] + '/25-' + str(self.show_pic[1]) + '.jpg'
+            self.cur_file = '25'
+        elif part == 'bol':
             self.show_pic[0] = self.out_folder + '/26_result'
             self.cur_ImPath = self.show_pic[0] + '/26-' + str(self.show_pic[1]) + '.jpg'
-            cur_file = '26'
+            self.cur_file = '26'
         elif part == 'ld':
             self.show_pic[0] = self.out_folder + '/27_result'
             self.cur_ImPath = self.show_pic[0] + '/27-' + str(self.show_pic[1]) + '.jpg'
-            cur_file = '27'
+            self.cur_file = '27'
         elif part == 'lu':
             self.show_pic[0] = self.out_folder + '/28_result'
             self.cur_ImPath = self.show_pic[0] + '/28-' + str(self.show_pic[1]) + '.jpg'
-            cur_file = '28'
+            self.cur_file = '28'
         # print('当前应该显示的图片结果' + self.cur_ImPath)
+        if len(os.listdir(self.show_pic[0])) == 266:
+            self.button_pass.setExclusive(False)
+
+            self.passseq_9.setEnabled(False)
+            self.passseq_10.setEnabled(False)
+            self.passseq_11.setEnabled(False)
+            self.passseq_12.setEnabled(False)
+            self.passseq_13.setEnabled(False)
+            self.passseq_14.setEnabled(False)
+            self.passseq_15.setEnabled(False)
+            self.passseq_16.setEnabled(False)
+
+            self.button_pass.setExclusive(True)
+        else:
+            self.button_pass.setExclusive(False)
+
+            self.passseq_9.setEnabled(True)
+            self.passseq_10.setEnabled(True)
+            self.passseq_11.setEnabled(True)
+            self.passseq_12.setEnabled(True)
+            self.passseq_13.setEnabled(True)
+            self.passseq_14.setEnabled(True)
+            self.passseq_15.setEnabled(True)
+            self.passseq_16.setEnabled(True)
+
+            self.button_pass.setExclusive(True)
         if exists(self.show_pic[0]):
             self.show_info = []
-            dir_warn = self.out_folder + '/'+ cur_file + '_label.txt'
+            dir_warn = self.out_folder + '/'+ self.cur_file + '_label.txt'
             try:
                 with open(dir_warn, 'r') as file_to_read:
                     while True:
@@ -980,6 +1044,7 @@ class Func_window(QtWidgets.QWidget,Ui_high_speed):
             self.refresh_button()
             self.label_pic.clear()
             self.label_pic.refresh()
+            self.label_picall.clear()          
             QMessageBox.warning(None,'错误路径提示','当前路径不存在，请检查')
             return
         if not self.show_pic[1]:
@@ -989,16 +1054,79 @@ class Func_window(QtWidgets.QWidget,Ui_high_speed):
                 self.refresh_button()
                 self.label_pic.clear()
                 self.label_pic.refresh()
+                self.label_picall.clear()             
                 self.update()
                 QMessageBox.warning(None,'错误路径提示','当前路径不存在，请检查')
                 return
+            #######合并图片#######
+            self.joint_pic(self.cur_file)
+            #####################
+
+        #########画框##############
+        self.cur_imageID = 0
+        self.load_image(self.cur_imageID)
+        ########################### 
+
+
         # print('当前图片的名字' + self.cur_ImPath)
         self.label_pic.refresh()
         self.label_pic.LocalFileName = self.cur_ImPath
         self.update()
-
         self.label_state.setText('图片序号      ' + self.cur_ImPath)
         self.info_proc.setText(str(self.cur_imageID + 1) + '/' + str(self.image_num))
+
+    '''
+        拼接图片
+    '''
+    def joint_pic(self, cur_file):
+        dir_root = self.show_pic[0] 
+        files = os.listdir(dir_root)
+        toImage = Image.new('RGB', (512, 350 * self.image_num))  # 构造图片的宽和高
+        count = 0
+        seq = (self.show_pic[1] - 5 ) / 32
+        self.picall_save = self.out_folder + '/' + cur_file + '_jointPic'
+        pic_root = self.picall_save + '/' + self.cur_file + '_' + str(int(seq)) + '_picall.jpg'
+        if os.path.exists(pic_root):
+            return
+        for j in range(self.show_pic[1], self.show_pic[2]):
+            filename = dir_root + '/' + cur_file + '-' + str(j) + '.jpg'
+            # print(filename)
+            fromImage = Image.open(filename)
+            fromImage = fromImage.resize((512, 350))
+            toImage.paste(fromImage, (0, count*350))
+            count += 1
+            ##########旋转角度#################
+            changeImage = toImage.rotate(90, expand = 1)
+            ##################################
+            if not os.path.exists(self.picall_save):
+                os.mkdir(self.picall_save)
+            outfile = os.path.join(self.picall_save, cur_file + '_' + str(int(seq)) + '_picall.jpg')
+            changeImage.save(outfile)
+
+
+    '''
+        读取图片文件并且显示在对应位置
+    '''
+    def load_image(self, point):
+        seq = (self.show_pic[1] - 5 ) / 32
+        bgr_image = self.cv_imread(self.picall_save + '/' + self.cur_file + '_' + str(int(seq)) + '_picall.jpg')
+        if len(bgr_image.shape) == 2:  # 若是灰度图则转为三通道
+            print("Warning:gray image", self.path)
+            bgr_image = cv2.cvtColor(bgr_image, cv2.COLOR_GRAY2BGR)
+        size = (int(self.label_picall.width()), int(self.label_picall.height()))
+        bgr_image = cv2.resize(bgr_image, size, interpolation=cv2.INTER_AREA)
+        rgb_img = cv2.cvtColor(bgr_image, cv2.COLOR_BGR2RGB)  # 将BGR转为RGB
+        point1 = (int(size[0] / self.image_num) * point   ,0)
+        point2 = (int(size[0] / self.image_num) * (point + 1) , size[1])
+        # print(point1, point2)
+        cv2.rectangle(rgb_img, point1, point2, (0,0,255), 2)
+        QImg = QImage(rgb_img.data, rgb_img.shape[1], rgb_img.shape[0], rgb_img.shape[1]*3, QImage.Format_RGB888)
+        pixmap = QPixmap.fromImage(QImg)
+        self.label_picall.setPixmap(pixmap)
+        self.label_picall.setScaledContents(True)
+
+
+
 
     def ShowMininizedWindow(self):
         self.showMinimized()

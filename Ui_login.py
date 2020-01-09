@@ -159,15 +159,15 @@ class Ui_Form(object):
 
     def retranslateUi(self, Form):
         _translate = QtCore.QCoreApplication.translate
-        Form.setWindowTitle(_translate("Form", "高速列车车轮组件异常动态智能检测系统"))
-        self.label_title.setText(_translate("Form", "高速列车车轮组件异常动态智能检测系统"))
+        Form.setWindowTitle(_translate("Form", "动车组故障图像检测系统"))
+        self.label_title.setText(_translate("Form", "动车组故障图像检测系统"))
         self.input_account.setPlaceholderText(_translate("Form", "请输入账号"))
         self.input_pas.setPlaceholderText(_translate("Form", "请输入密码"))
         self.button_login.setText(_translate("Form", "登录"))
         self.info_coor.setText(_translate("Form", "研制单位\n"
-"    安徽富煌钢构股份公司\n"
-"    安徽君达高科公司\n"
-"    安徽富煌科技股份公司\n"
+"    中国铁路郑州局集团有限公司郑州动车段\n"
+"    安徽富煌科技股份有限公司\n"
+"    合肥富煌君达高科信息技术有限公司\n"
 "    北京交通大学\n"
 "    安徽大学"))
 
