@@ -11,4 +11,6 @@
 利用python自带的工具包，在vscode中可以直接右键生成对应.py文件，其实文件生成后随着.ui文件的改动并不实时，所以并不长久，但是仅仅为了实现功能，考虑不足的地方请见谅
 ![image](readme_images/ui文件转化为python代码.jpg)
 
-2. 
+2. 修改python文件
+
+
