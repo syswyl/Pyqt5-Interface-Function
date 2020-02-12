@@ -64,7 +64,7 @@ sys.argv是一组命令行参数的列表。Python可以在shell里运行，这�
 
 - 界面
 
-   登录界面比较简单，因为背景比较复杂，不具有模块性，所以通过直接插入一张背景图的方式解决。在qt中画图的方式有多种，在这里使用paintEvent函数，它是QWidget类中的虚函数，用于ui的绘制，会在多种情况下被其他函数自动调用。<b/r>
+   登录界面比较简单，因为背景比较复杂，不具有模块性，所以通过直接插入一张背景图的方式解决。在qt中画图的方式有多种，在这里使用paintEvent函数，它是QWidget类中的虚函数，用于ui的绘制，会在多种情况下被其他函数自动调用。</br>
 当然还有其他很多绘制方式，请自行实践解决（QPixmap/QImage/QPicture）
 
 ```python
@@ -99,12 +99,12 @@ def login_func(self):
         func_window.show()
         self.close()
     else:
-        reply = QMessageBox.warning(self,"警告","账号或者密码输入错误！"
+        reply = QMessageBox.warning(self,"警告","账号或者密码输入错误！")
 ```
 
 - 窗口切换
 
-利用QWidget类中的show()函数，可以实现窗口的显示，在正确判定之后，关闭当前login窗口，同时显示function窗口，这里所用到的move()函数设置窗口的左上角坐标，为了让窗口显示位置合适一点。
+利用QWidget类中的show()函数，可以实现窗口的显示，在正确判定之后，关闭当前login窗口，同时显示function窗口，这里所用到的move()函数设置窗口的左上角坐标，为了让窗口在屏幕上显示位置恒定居中一点。
 ```python
 if __name__ == '__main__':
     app = QtWidgets.QApplication(sys.argv)
