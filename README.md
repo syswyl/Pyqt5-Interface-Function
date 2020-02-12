@@ -20,16 +20,16 @@
 
 软件主体为两个界面，login界面和function界面，其中的美化及详细的界面跳转和功能实现在之后详细介绍。
 
-![登录界面](https://github.com/syswyl/Pyqt5_highspeed/blob/master/readme_images/login.jpg)
+![登录界面](https://github.com/syswyl/Pyqt5-Interface-Function/blob/master/readme_images/login.jpg)
 
-![功能界面](https://github.com/syswyl/Pyqt5_highspeed/blob/master/readme_images/function.jpg)
+![功能界面](https://github.com/syswyl/Pyqt5-Interface-Function/blob/master/readme_images/function.jpg)
 
 ### 实现步骤
 
 1. 代码生成
 
   这里我使用的是vscode进行代码编写，配置完成相关环境之后，可以直接右键相关.ui文件，就可以直接转化为python代码
-![直接生成python代码](https://github.com/syswyl/Pyqt5_highspeed/blob/master/readme_images/ui_to_python.jpg)
+![直接生成python代码](https://github.com/syswyl/Pyqt5-Interface-Function/blob/master/readme_images/ui_to_python.jpg)
 也可以使用命令行指令：
 > pyuic5  -o  ui_window.ui  py_window.py
 
