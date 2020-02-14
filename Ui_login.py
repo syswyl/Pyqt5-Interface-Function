@@ -165,11 +165,11 @@ class Ui_Form(object):
         self.input_pas.setPlaceholderText(_translate("Form", "请输入密码"))
         self.button_login.setText(_translate("Form", "登录"))
         self.info_coor.setText(_translate("Form", "研制单位\n"
-"    中国铁路郑州局集团有限公司郑州动车段\n"
-"    安徽富煌科技股份有限公司\n"
-"    合肥富煌君达高科信息技术有限公司\n"
-"    北京交通大学\n"
-"    安徽大学"))
+"    xxxxxxxxxxxxxxxxxxxxxxxxxx\n"
+"    xxxxxxxxxxxxxxxxxxxxxxxxx\n"
+"    xxxxxxxxxxxxxxxxxxxxxxxxx\n"
+"    xxxxxxxx\n"
+"    xxxxxxx"))
 
 
 if __name__ == "__main__":
