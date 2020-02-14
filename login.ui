@@ -339,11 +339,11 @@
              </property>
              <property name="text">
               <string>研制单位
-	安徽富煌钢构股份公司
-	安徽君达高科公司
-	安徽富煌科技股份公司
-	北京交通大学
-	安徽大学</string>
+	xxxxxx
+	xxxxxxx
+	xxxxxxx
+	xxxxxxx
+	xxxxxxx</string>
              </property>
              <property name="textFormat">
               <enum>Qt::PlainText</enum>
